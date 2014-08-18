@@ -43,6 +43,32 @@
 
 <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/off-canvas.js"></script>
 
+<?php   //////////////  FULLSTORY USER TRACKING ON PROD ONLY ///////////////////
+        if( $_SERVER['PRODUCTION'] ): // Do not track devel folks ?>
+<?php $current_user = wp_get_current_user(); ?>
+<script>
+var _fs_debug = false;
+var _fs_host='www.fullstory.com',_fs_org='ePE';
+(function(m,n,e,t,l,o,g,y){
+  g=m[e]=function(a,b){g.q?g.q.push([a,b]):g._api(a,b);};g.q=[];
+  o=n.createElement(t);o.async=1;o.src='https://'+_fs_host+'/s/fs.js';
+  y=n.getElementsByTagName(t)[0];y.parentNode.insertBefore(o,y);
+  g.identify=function(i,v){g(l,{uid:i});if(v)g(l,v)};g.setUserVars=function(v){FS(l,v)};
+  g.setSessionVars=function(v){FS('session',v)};g.setPageVars=function(v){FS('page',v)};
+})(window,document,'FS','script','user');
+
+//To integrate with a customer support tool, make sure to set the email field using FS.identify.
+//The customer id should be whatever you use to identify a unique user in your system.
+FS.identify('<?php echo $current_user->user_login ?>', {
+  displayName: '<?php echo $current_user->display_name ?>',
+  email: '<?php echo $current_user->user_email ?>'
+});
+//function _fs_ready() {
+//  var sessionUrl = FS.getCurrentSessionURL();
+//}
+</script>
+<?php endif; // if( $_SERVER['PRODUCTION'] ) /////  FULLSTORY END  /////// ?>
+
 <?php // Includes Twitter, Facebook and Google+ button code if the share post option is active.
     $options = get_option('waipoua_theme_options');
     if($options['share-singleposts'] or $options['share-posts'] or $options['share-pages']) : ?>
